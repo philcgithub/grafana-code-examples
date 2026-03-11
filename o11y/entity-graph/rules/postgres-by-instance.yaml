@@ -1,0 +1,18 @@
+name: postgres-by-instance
+entities:
+- type: Service
+  name: db_instance | server
+  scope:
+    env: asserts_env
+    site: asserts_site
+  definedBy:
+  - query: |
+      group by (db_instance, db_namespace, db_system, asserts_env, asserts_site)(
+        traces_service_graph_request_total{connection_type="database", db_instance!=""}
+      )
+    labelValues:
+      db_namespace: db_namespace
+      db_system: db_system
+    literals:
+      connection_type: database
+      service_type: database
